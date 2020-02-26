@@ -115,11 +115,11 @@
                         <el-menu-item index="/content/schoolIntroduce">学校介绍</el-menu-item>
                     </el-menu-item-group>
                 </router-link>
-                <!--<router-link to="/content/goodsSet">-->
-                    <!--<el-menu-item-group>-->
-                        <!--<el-menu-item index="/content/goodsSet">物品管理</el-menu-item>-->
-                    <!--</el-menu-item-group>-->
-                <!--</router-link>-->
+                <router-link to="/content/goodsSet">
+                    <el-menu-item-group>
+                        <el-menu-item index="/content/goodsSet">物品管理</el-menu-item>
+                    </el-menu-item-group>
+                </router-link>
             </el-submenu>
 
             <!--<router-link to="/content/classRoomSet">-->

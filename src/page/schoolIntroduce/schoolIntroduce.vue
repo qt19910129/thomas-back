@@ -4,7 +4,7 @@
             <el-form-item label="学校主图" prop="name">
                 <el-upload
                         class="upload-demo"
-                        action="http://47.104.251.161:8080/school/fileUpload/upload"
+                        action="http://admin.thomasbk.com:9007/school/fileUpload/upload"
                         :headers="{token:9999}"
                         :on-preview="handlePreview"
                         :on-remove="handleRemove"

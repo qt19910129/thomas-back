@@ -74,7 +74,7 @@
         },
         methods: {
             getCode() {  //获取验证码图片
-                this.codeSrc = 'http://47.104.251.161:8080' + '/school/index/verificationCode?timer=' + new Date();
+                this.codeSrc = 'http://admin.thomasbk.com:9007' + '/school/index/verificationCode?timer=' + new Date();
             },
             login() {
                 this.$refs.loginForm.validate((valid) => {
