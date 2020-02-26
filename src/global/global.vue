@@ -7,6 +7,9 @@
     const token=localStorage.getItem("token");
     const domainUrl = 'http://47.104.251.161:8080';
     const domain = 'http://test.school.yiyatalk.com';
+    // const token=localStorage.getItem("token");
+    // const domainUrl = 'http://47.104.251.161:8080';
+    // const domain = 'http://test.school.yiyatalk.com';
     // const domain = 'http://localhost:8888';
 
 
@@ -14,9 +17,9 @@
     //测试环境 http://47.104.251.161:8080
 
     //正式环境配置
-    // const token = localStorage.getItem("token");
-    // const domainUrl = 'http://admin.thomasbk.com:9007';
-    // const domain = 'http://admin.thomasbk.com';
+    const token = localStorage.getItem("token");
+    const domainUrl = 'http://admin.thomasbk.com:9007';
+    const domain = 'http://admin.thomasbk.com';
 
 
     export default {
