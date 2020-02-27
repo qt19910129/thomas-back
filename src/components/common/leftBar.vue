@@ -70,6 +70,12 @@
                     </el-menu-item-group>
                 </router-link>
 
+                <router-link to="/content/courseBag">
+                    <el-menu-item-group>
+                        <el-menu-item index="/content/courseBag">课包管理</el-menu-item>
+                    </el-menu-item-group>
+                </router-link>
+
                 <router-link to="/content/subjectSet">
                     <el-menu-item-group>
                         <el-menu-item index="/content/subjectSet">科目设置</el-menu-item>
@@ -205,7 +211,9 @@
                     return '/content/teacherSet';
                 } else if(this.$route.path === '/content/courseSet') {
                     return '/content/courseSet';
-                } else if(this.$route.path === '/content/subjectSet') {
+                } else if(this.$route.path === '/content/courseBag') {
+                    return '/content/courseBag';
+                }  else if(this.$route.path === '/content/subjectSet') {
                     return '/content/subjectSet';
                 } else if(this.$route.path === '/content/levelSet') {
                     return '/content/levelSet';

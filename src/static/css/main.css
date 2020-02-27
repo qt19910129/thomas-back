@@ -576,3 +576,6 @@ thead th{
 .el-table{
     border-radius: 6px;
 }
+.courseBag .el-input,.courseBag .el-textarea{
+    width: 80%;
+}

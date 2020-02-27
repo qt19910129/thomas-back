@@ -16,6 +16,7 @@ const SubjectSet = () => import("@/page/subjectSet/subjectSet.vue");  //科目�
 const LevelSet = () => import("@/page/levelSet/levelSet.vue");  //级别设置
 const ClassFeedback = () => import("@/page/classFeedback/classFeedback.vue");  //课后反馈
 const GoodsSet = () => import("@/page/goodsSet/goodsSet.vue");  //物品管理
+const CourseBag = () => import("@/page/courseBag/courseBag.vue");  //课包管理
 
 //详情页
 const Students = () => import("@/page/details/students.vue");  //查看学生
@@ -55,4 +56,5 @@ export default [
     { path: "/content/classFeedback", name: "课后反馈", component: ClassFeedback },
     { path: "/content/goodsSet", name: "物品管理", component: GoodsSet },
     { path: "/content/goodsSet/seeGoods/:goodsId", name: "查看物品", component: SeeGoods },
+    { path: "/content/courseBag", name: "课包管理", component: CourseBag },
 ]
