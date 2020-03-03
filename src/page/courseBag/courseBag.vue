@@ -8,14 +8,31 @@
             <!--数据表格-->
             <el-table :data="courseBagData" border style="width: 100%;border: 1px solid #eee;font-size: 14px;" :header-cell-style="{background:'#53A1E8',color:'#fff'}">
                 <el-table-column type="index" label="ID" width="" align="center"></el-table-column>
-                <el-table-column prop="name" label="课包名称" align="center"></el-table-column>
-                <el-table-column prop="num" label="课时数" align="center"></el-table-column>
-                <el-table-column prop="price" label="课包价格" align="center"></el-table-column>
-                <el-table-column prop="explain" label="课包说明" align="center"></el-table-column>
+                <el-table-column prop="packageName" label="课包名称" align="center"></el-table-column>
+                <el-table-column prop="packageTimes" label="课时数" align="center"></el-table-column>
+                <el-table-column prop="packagePrice" label="课包价格" align="center"></el-table-column>
+                <el-table-column prop="packageRemark" label="课包说明" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
-                    <el-button type="text" icon="el-icon-edit" @click="editCourseBag">编辑</el-button>
+                    <template slot-scope="scope">
+                        <el-button type="text" icon="el-icon-edit" @click="editCourseBag(scope.row.packageId)">编辑</el-button>
+                    </template>
                 </el-table-column>
             </el-table>
+            <template>
+                <el-pagination
+                        align="right"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page.sync="currentPage"
+                        :page-sizes="[10, 20, 50, 100]"
+                        :page-size="10"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="records"
+                        background
+                        :hide-on-single-page="pageValue"
+                        class="pages">
+                </el-pagination>
+            </template>
             <!--新增，编辑弹窗-->
             <el-dialog :title="editTitle" :visible.sync="courseBagVisible" class="courseBagAlert" :before-close="handleClose">
                 <el-form :model="courseBagForm" :rules="courseBagRules" ref="courseBagForm">
@@ -42,19 +59,18 @@
 </template>
 
 <script>
+    import {
+        getCourseBagList,
+        getCourseBagAdd,
+        getCourseBagEditShow,
+        getCourseBagEditSave
+    } from "../../axios/courseBag";
     export default {
         data() {
             return {
                 courseBagVisible:false,   //新增编辑弹窗
                 editTitle:'',  //弹窗标题
-                courseBagData:[
-                    {
-                        'name':'少儿英语',
-                        'num':'111',
-                        'price':'35',
-                        'explain':'少儿英语少儿英语少儿英语少儿英语',
-                    }
-                ],
+                courseBagData:[],
                 courseBagForm: {
                     name:'',
                     num:'',
@@ -95,9 +111,35 @@
                         }
                     ]
                 },
+                currentPage:1,  //分页默认选中哪页
+                records:0,  //总页数
+                rows:10,  //默认每页条数
+                page:1,  //默认打开第一页
+                pageValue:false,  //当只有一页时 分页隐藏
+                packageId:-1,  //课包id
             }
         },
+        mounted() {
+            this.getList();  //列表数据
+        },
         methods: {
+            getList() {  //获取课程包列表
+                let data = {
+                    'rows':this.rows,
+                    'page':this.page
+                };
+                getCourseBagList(data).then(res => {
+                    if(res.code == 0) {
+                        this.records = res.data.jqGirdPage.records;
+                        this.courseBagData = res.data.jqGirdPage.rows;
+                        if(res.data.jqGirdPage.records <= 10) {  //小于10条时 隐藏分页
+                            this.pageValue = true;
+                        }
+                    } else {
+                        this.$message.error('网络异常，请稍后再试');
+                    }
+                }).catch((e) => {});
+            },
             addCourseBag() {  //新增
                 this.courseBagVisible = true;
                 this.editTitle = '新增课包';
@@ -118,17 +160,83 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         if(this.editTitle == '新增课包') {
-
+                            let data = {
+                                'packageName':this.courseBagForm.name,
+                                'packageTimes':this.courseBagForm.num,
+                                'packagePrice':this.courseBagForm.price,
+                                'packageRemark':this.courseBagForm.explain,
+                            };
+                            getCourseBagAdd(data).then(res => {
+                                if(res.code == 0) {
+                                    this.$message({
+                                        type: 'success',
+                                        message: '新增成功'
+                                    });
+                                    this.$refs[formName].resetFields();
+                                    this.courseBagVisible = false;
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    },1000);
+                                } else {
+                                    this.$message.error('网络异常，请稍后再试');
+                                }
+                            }).catch((e) => {});
                         } else if(this.editTitle == '编辑课包') {
-
+                            let data = {
+                                'packageName':this.courseBagForm.name,
+                                'packageTimes':this.courseBagForm.num,
+                                'packagePrice':this.courseBagForm.price,
+                                'packageRemark':this.courseBagForm.explain,
+                                'packageId':this.packageId
+                            };
+                            getCourseBagEditSave(data).then(res => {
+                                if(res.code == 0) {
+                                    this.$message({
+                                        type: 'success',
+                                        message: '修改成功'
+                                    });
+                                    this.$refs[formName].resetFields();
+                                    this.courseBagVisible = false;
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    },1000);
+                                } else {
+                                    this.$message.error('网络异常，请稍后再试');
+                                }
+                            }).catch((e) => {});
                         }
                     }
                 });
             },
-            editCourseBag() {   //编辑课包
+            editCourseBag(packageId) {   //编辑课包
                 this.courseBagVisible = true;
                 this.editTitle = '编辑课包';
-            }
+                this.packageId = packageId;
+                let data = {
+                    'packageId':packageId
+                };
+                getCourseBagEditShow(data).then(res => {
+                    if(res.code == 0) {
+                        this.courseBagForm.name = res.data.packageName;
+                        this.courseBagForm.num = res.data.packageTimes;
+                        this.courseBagForm.explain = res.data.packageRemark;
+                        this.courseBagForm.price = res.data.packagePrice;
+                    } else {
+                        this.$message.error('网络异常，请稍后再试');
+                    }
+                }).catch((e) => {});
+            },
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`);
+                this.rows = `${val}`;
+                this.currentPage = 1;
+                this.page = 1;
+                this.getList();
+            },
+            handleCurrentChange(val) {
+                this.page = `${val}`;
+                this.getList();
+            },
         }
     }
 </script>

@@ -146,11 +146,22 @@
         <!--续费弹窗-->
         <el-dialog title="续费" :visible.sync="dialogFormVisible" :before-close="handleClose">
             <el-form :model="form" :rules="rules" ref="form">
+                <el-form-item label="选择课包名称" :label-width="formLabelWidth" prop="courseBagName">
+                    <el-select v-model="form.courseBagName" placeholder="请选择课包名称" filterable clearable>
+                        <el-option v-for="list in courseBag" :label="list.name" :value="list.value" :key="list.value"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="续费课时" :label-width="formLabelWidth" prop="renewNum">
                     <el-input v-model.number="form.renewNum" autocomplete="off" placeholder="请输入续费课时" style="width: 80%;"></el-input>
                 </el-form-item>
+                <el-form-item label="续费费用" :label-width="formLabelWidth" prop="renewMoney">
+                    <el-input v-model.number="form.renewMoney" autocomplete="off" placeholder="请输入续费费用"></el-input>
+                </el-form-item>
                 <el-form-item label="续费日期" :label-width="formLabelWidth" prop="renewDay">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.renewDay" value-format="yyyy-MM-dd" style="width: 80%;" :picker-options="pickerOptions"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="续费备注信息" :label-width="formLabelWidth" prop="explain">
+                    <el-input  v-model="form.explain" type="textarea" :autosize="{ minRows: 4, maxRows: 8}" placeholder="请输入续费备注信息" :maxlength="120"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -187,6 +198,9 @@
                 form: {
                     renewNum: '',
                     renewDay: '',
+                    courseBagName:'',
+                    renewMoney:'',
+                    explain:''
                 },
                 formLabelWidth: '120px',
                 rules: {
@@ -206,6 +220,25 @@
                     renewDay: [
                         { required: true, message: '请选择续费日期', trigger: 'blur' }
                     ],
+                    courseBagName: [
+                        { required: true, message: '请选择课包名称', trigger: 'change' }
+                    ],
+                    renewMoney: [
+                        { required: true, message: '请输入续费费用', trigger: 'blur' },
+                        { type: 'number', message: '请输入正确的续费费用'},
+                        {
+                            validator(rule, value, callback) {
+                                if(value <= 0) {
+                                    callback(new Error('续费费用不能小于0'));
+                                } else {
+                                    callback();
+                                }
+                            }
+                        }
+                    ],
+                    explain: [
+                        { required: true, message: '请输入续费备注信息', trigger: 'blur' }
+                    ],
                 },
                 gridData: [],  //未签到信息表
                 dialogTableVisible: false,
@@ -222,6 +255,18 @@
                 rows1:10,  //默认每页条数
                 page1:1,  //默认打开第一页
                 pageValue1:false,  //当只有一页时 分页隐藏
+                courseBag:[
+                    {
+                        'name':111,
+                        'value':1
+
+                    },
+                    {
+                        'name':222,
+                        'value':2
+
+                    }
+                ]
             }
         },
         mounted() {

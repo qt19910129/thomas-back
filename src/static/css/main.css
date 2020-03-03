@@ -579,3 +579,15 @@ thead th{
 .courseBag .el-input,.courseBag .el-textarea{
     width: 80%;
 }
+.studentSet .el-textarea{
+    width: 80%;
+}
+.pageIndex .el-select,.pageIndex .el-input,.pageIndex .el-textarea{
+    width: 80%;
+}
+.pageIndex .el-select .el-input{
+    width: 100%;
+}
+.students .el-textarea,.students .el-input{
+    width: 80%;
+}

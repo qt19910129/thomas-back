@@ -28,7 +28,10 @@
                 <el-col :span="6" v-if="studentInfo.renewTime">{{studentInfo.renewTime.substring(0,10)}}</el-col>
                 <el-col :span="6" v-else></el-col>
                 <el-col :span="6" class="tableName">购课信息</el-col>
-                <el-col :span="6">{{studentInfo.buyClassCount}}</el-col>
+                <el-col :span="6" style="color: red;">
+                    20/80
+                    <el-button type="text" icon="el-icon-s-release" @click="refund()">退费</el-button>
+                </el-col>
             </el-row>
             <el-row>
                 <el-col :span="6" class="tableName">宝宝(学生)姓名</el-col>
@@ -65,7 +68,9 @@
             </el-row>
             <el-row>
                 <el-col :span="6" class="tableName">家庭住址</el-col>
-                <el-col :span="18">{{studentInfo.address}}</el-col>
+                <el-col :span="6">{{studentInfo.address}}</el-col>
+                <el-col :span="6" class="tableName">就读学校</el-col>
+                <el-col :span="6">{{studentInfo.school}}</el-col>
             </el-row>
             <el-row>
                 <el-col :span="6" class="tableName">用户积分</el-col>
@@ -105,6 +110,49 @@
                     class="pages">
             </el-pagination>
         </template>
+        <!--缴费信息-->
+        <div class="tit">缴费信息</div>
+        <el-table :data="payData" border style="width: 100%;border: 1px solid #eee;font-size: 14px;" :header-cell-style="{background:'#53A1E8',color:'#fff'}" class="signTable">
+            <el-table-column prop="payDate" label="缴费日期" align="center"></el-table-column>
+            <el-table-column prop="rePayData" label="续费日期" align="center"></el-table-column>
+            <el-table-column prop="buyKs" label="购买课时" align="center"></el-table-column>
+            <el-table-column prop="courseBagName" label="课包名称" align="center"></el-table-column>
+            <el-table-column prop="edits" label="操作" align="center">
+                <el-button type="text" icon="el-icon-edit" @click="editPay()">修改</el-button>
+            </el-table-column>
+        </el-table>
+        <!--退费信息-->
+        <div class="tit">退费信息</div>
+        <el-table :data="refundData" border style="width: 100%;border: 1px solid #eee;font-size: 14px;" :header-cell-style="{background:'#53A1E8',color:'#fff'}" class="signTable">
+            <el-table-column prop="refundDate" label="退费日期" align="center"></el-table-column>
+            <el-table-column prop="refundMoney" label="退费金额" align="center"></el-table-column>
+            <el-table-column prop="refundExplain" label="退费说明" align="center"></el-table-column>
+        </el-table>
+        <!--兑换信息-->
+        <div class="tit">兑换信息</div>
+        <el-table :data="changeData" border style="width: 100%;border: 1px solid #eee;font-size: 14px;" :header-cell-style="{background:'#53A1E8',color:'#fff'}" class="signTable">
+            <el-table-column prop="changeDate" label="兑换日期" align="center"></el-table-column>
+            <el-table-column prop="changeNum" label="使用数量" align="center"></el-table-column>
+            <el-table-column prop="changeGoods" label="兑换商品" align="center"></el-table-column>
+        </el-table>
+        <!--退费弹窗-->
+        <el-dialog title="退费" :visible.sync="refundVisible" :before-close="handleClose">
+            <el-form :model="refundForm" :rules="refundRules" ref="refundForm">
+                <el-form-item label="退费日期" :label-width="formLabelWidth" prop="refundDate">
+                    <el-date-picker type="date" placeholder="选择退费日期" v-model="refundForm.refundDate" value-format="yyyy-MM-dd" style="width: 80%;" :picker-options='pickerOptions'></el-date-picker>
+                </el-form-item>
+                <el-form-item label="退费费用" :label-width="formLabelWidth" prop="refundMoney">
+                    <el-input v-model.number="refundForm.refundMoney" autocomplete="off" placeholder="请输入退费费用"></el-input>
+                </el-form-item>
+                <el-form-item label="退费说明" :label-width="formLabelWidth" prop="refundExplain">
+                    <el-input  v-model="refundForm.refundExplain" type="textarea" :autosize="{ minRows: 4, maxRows: 8}" placeholder="请输入退费说明" :maxlength="120"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="resetRefundForm('refundForm')">取 消</el-button>
+                <el-button type="primary" @click="submitRefundForm('refundForm')">确 定</el-button>
+            </div>
+        </el-dialog>
         <!--学习分析-->
         <!--<div class="tit">学习分析</div>-->
         <!--<div id="studentEcharts"></div>-->
@@ -122,6 +170,7 @@
     export default {
         data() {
             return {
+                formLabelWidth: '120px',
                 studentInfo:{},  //学生信息
                 studentId: -1, //学生id
                 studentClassData:[
@@ -192,6 +241,55 @@
                 rows:10,  //默认每页条数
                 page:1,  //默认打开第一页
                 pageValue:false,  //当只有一页时 分页隐藏
+                refundVisible:false,  //退费弹窗
+                refundForm:{
+                    'refundDate':'',
+                    'refundMoney':'',
+                    'refundExplain':''
+                },
+                refundRules:{
+                    refundDate: [
+                        { required: true, message: '请选择退费日期', trigger: 'blur' }
+                    ],
+                    refundMoney: [
+                        { required: true, message: '请输入退费费用', trigger: 'blur' },
+                        { type: 'number', message: '请输入正确的退费费用'},
+                        {
+                            validator(rule, value, callback) {
+                                if(value <= 0) {
+                                    callback(new Error('退费费用不能小于0'));
+                                } else {
+                                    callback();
+                                }
+                            }
+                        }
+                    ],
+                    refundExplain: [
+                        { required: true, message: '请输入退费备注信息', trigger: 'blur' }
+                    ],
+                },
+                payData:[
+                    {
+                        'payDate':'2020-26-26',
+                        'rePayData':'2020-26-26',
+                        'buyKs':'111',
+                        'courseBagName':'哈哈哈'
+                    }
+                ],
+                refundData:[
+                    {
+                        'refundDate':'2020-26-26',
+                        'refundMoney':200,
+                        'refundExplain':'退费说明啊啊啊'
+                    }
+                ],
+                changeData:[
+                    {
+                        'changeDate':'2020-26-26',
+                        'changeNum':'-200星星',
+                        'changeGoods':'狗'
+                    }
+                ]
             }
         },
         mounted() {
@@ -351,7 +449,33 @@
             },
             load() {  //导出
                 window.location.href = this.GLOBAL.domain + '/school/student/export?id=' + this.$route.params.studentId;
+            },
+            refund() {  //退费
+                this.refundVisible = true;
+            },
+            handleClose(done) {
+                this.$refs['refundForm'].resetFields();
+                this.refundVisible = false;
+            },
+            resetRefundForm(formName) {  //续费取消
+                this.refundVisible = false;
+                this.$refs[formName].resetFields();
+                this.$message({
+                    type: 'info',
+                    message: '取消输入'
+                });
+            },
+            submitRefundForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
 
+                    } else {
+                        this.refundVisible = true;
+                        return false;
+                    }
+                });
+            },
+            editPay() {  //修改
 
             }
         },
