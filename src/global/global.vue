@@ -4,7 +4,8 @@
 
 <script>
     //全局参数设置
-    const token=localStorage.getItem("token");
+    // const token=localStorage.getItem("token");
+    const token=9999;
     const domainUrl = 'http://47.104.251.161:8080';
     // const domain = 'http://test.school.yiyatalk.com';
     // const token=localStorage.getItem("token");

@@ -591,3 +591,6 @@ thead th{
 .students .el-textarea,.students .el-input{
     width: 80%;
 }
+.disabled .el-upload--picture-card {
+    display: none!important;
+}

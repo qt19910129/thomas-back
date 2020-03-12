@@ -34,8 +34,8 @@
                         </el-dropdown>
                     </div>
                 </div>
-                <!--{{data}}-->
-                <span class="addClass" v-if="data.type == 'current-month'" @click="goAddTimeTable(1,data.day,data.day)">+</span>
+                <!--{{new Date(data.day).getTime() < nowTime}}-->
+                <span class="addClass" v-if="data.type == 'current-month' && new Date(data.day).getTime() > nowTime" @click="goAddTimeTable(1,data.day,data.day)">+</span>
             </template>
         </el-calendar>
         <div class="moreAddClass">
@@ -55,7 +55,8 @@
                 value: new Date(),
                 year:'',
                 mounth:'',
-                dates:''
+                dates:'',
+                nowTime:0
             }
         },
         methods:{
@@ -76,7 +77,7 @@
                     }
                 } else {
                     this.$message({
-                        message: '当前时间大于您需要添加/修改的时间，不能执行此操作',
+                        message: '小于等于当前日期，不能执行此操作',
                         type: 'warning'
                     });
                 }
@@ -112,6 +113,7 @@
         },
         mounted:function(){
             // console.log(this.GLOBAL.domainUrl);
+            this.nowTime = new Date().getTime();
         },
         created() {
             this.getremarksList();
