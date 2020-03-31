@@ -3,17 +3,17 @@
         <!--搜索from表单-->
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
             <el-row>
-                <el-col :span="5">
+                <el-col :span="4">
                     <el-form-item prop="phoneNum" class="signSetStyle">
                         <el-input v-model.trim="ruleForm.phoneNum" placeholder="请输入用户手机号" :maxlength=11></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="5">
+                <el-col :span="4">
                     <el-form-item prop="stuName" class="signSetStyle">
                         <el-input v-model.trim="ruleForm.stuName" placeholder="请输入孩子姓名"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="10">
+                <el-col :span="8">
                     <el-form-item required>
                         <el-col :span="11">
                             <el-form-item prop="date1">
@@ -28,6 +28,15 @@
                                                 :picker-options="pickerOptionsEnd"></el-date-picker>
                             </el-form-item>
                         </el-col>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                    <el-form-item style="margin-left: 30px;">
+                        <el-select v-model="ruleForm.classState" placeholder="请选择班级状态" filterable clearable>
+                            <el-option label="新用户" value="1" key="1"></el-option>
+                            <el-option label="已联系" value="2" key="2"></el-option>
+                            <el-option label="试听" value="3" key="3"></el-option>
+                        </el-select>
                     </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -61,6 +70,13 @@
                 <el-table-column label="沟通记录" width="100" align="center">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="openRemare(scope.row.id)">记录</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="sex" label="状态" align="center">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.gender == 1">新用户</span>
+                        <span v-if="scope.row.gender == 2">已联系</span>
+                        <span v-if="scope.row.gender == 3">试听</span>
                     </template>
                 </el-table-column>
                 <el-table-column fixed="right" label="操作" width="150" align="center">

@@ -172,6 +172,10 @@
                 openeds:[],
                 goodsId:'',  //查看物品id
                 // openeds:['8','9','10']
+                subject:'',  //查看科目详情
+                ks:'',
+                kh:'',
+                syks:'',
             }
 
         },
@@ -195,6 +199,11 @@
                 this.teacherId1 = this.$route.params.teacherId;  //获取老师id
                 this.teacherId2 = this.$route.params.classId;  //获取老师id
                 this.goodsId = this.$route.params.goodsId;  //获取查看物品id
+                this.subject = this.$route.params.subject;  //获取查看科目详情id
+                this.kh = this.$route.params.kh;  //获取查看科目详情id
+                this.ks = this.$route.params.ks;  //获取查看科目详情id
+                this.syks = this.$route.params.syks;  //获取查看科目详情id
+                this.userId = this.$route.params.userId;
                 if(this.$route.path === '/content/pageIndex') {
                     return '/content/pageIndex';
                 } else if(this.$route.path === '/content/timeTableSet' || this.$route.path === '/content/details/addTimeTable/'+this.timeTableId || this.$route.path === '/content/details/moreTimeTable') {
@@ -205,7 +214,7 @@
                     return '/content/signSet';
                 } else if(this.$route.path === '/content/classSet' || this.$route.path === '/content/details/editClass/'+this.classId || this.$route.path === '/content/details/seeClass' || this.$route.path === '/content/details/seeSubject') {
                     return '/content/classSet';
-                } else if(this.$route.path === '/content/studentSet' || this.$route.path === '/content/details/students/'+this.studentId) {
+                } else if(this.$route.path === '/content/studentSet' || this.$route.path === '/content/details/students/'+this.studentId || this.$route.path === '/content/details/seeStudentClass/' + this.subject + '/' + this.ks + '/' + this.kh + '/' + this.syks + '/' + this.userId) {
                     return '/content/studentSet';
                 } else if(this.$route.path === '/content/teacherSet' || this.$route.path === '/content/details/teachers/'+this.teacherId1 || this.$route.path === '/content/details/teacherClassTable/'+this.teacherId2) {
                     return '/content/teacherSet';

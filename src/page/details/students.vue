@@ -94,6 +94,12 @@
             <el-table-column prop="zk" label="课时" align="center"></el-table-column>
             <el-table-column prop="kh" label="课耗" align="center"></el-table-column>
             <el-table-column prop="sy" label="剩余课时" align="center"></el-table-column>
+            <el-table-column label="操作" align="center" fixed="right" width="200">
+                <template slot-scope="scope">
+                    <el-button type="text" icon="el-icon-view" @click="seeStudentClass(scope.row.subject,scope.row.zk,scope.row.kh,scope.row.sy)">查看</el-button>
+                    <el-button type="text" icon="el-icon-download" @click="loadStudentClass(scope.row.subject)">导出</el-button>
+                </template>
+            </el-table-column>
         </el-table>
         <template>
             <el-pagination
@@ -170,6 +176,11 @@
     export default {
         data() {
             return {
+                pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() < Date.now();
+                    }
+                },
                 formLabelWidth: '120px',
                 studentInfo:{},  //学生信息
                 studentId: -1, //学生id
@@ -448,7 +459,7 @@
                 });
             },
             load() {  //导出
-                window.location.href = this.GLOBAL.domain + '/school/student/export?id=' + this.$route.params.studentId;
+                window.location.href = this.GLOBAL.domainUrl + '/school/student/export?id=' + this.$route.params.studentId;
             },
             refund() {  //退费
                 this.refundVisible = true;
@@ -477,6 +488,15 @@
             },
             editPay() {  //修改
 
+            },
+            seeStudentClass(subject,ks,kh,syks) {  //查看上课信息详情
+                let userId = this.$route.params.studentId;
+                this.$router.push({
+                    path: `/content/details/seeStudentClass/${subject}/${ks}/${kh}/${syks}/${userId}`,
+                })
+            },
+            loadStudentClass(subject) {  //导出上课信息详情
+                window.location.href = this.GLOBAL.domainUrl + '/school/student/export_skxx_detail?userId=' + this.$route.params.studentId + '&subject=' + subject;
             }
         },
         filters: {
@@ -519,8 +539,11 @@
         .tit{
             font-size: 18px;
             margin: 20px 0;
+            height: 18px;
+            line-height: 18px;
             button{
                 padding: 0;
+                margin-top: 3px;
             }
         }
         #studentEcharts{

@@ -74,3 +74,27 @@ export function changeStars(query) {
         }
     );
 }
+/**
+ * 获取课时包列表
+ */
+export function getBagsList(query) {
+    return request.post(global.domainUrl + "/school/coursePackage/selectPackageListBySchoolId", query
+        , {
+            headers:{
+                token:localStorage.getItem("token")
+            }
+        }
+    );
+}
+/**
+ * 获取科目课表列表
+ */
+export function getOnesList(query) {
+    return request.post(global.domainUrl + "/school/student/skxx_view_list", query
+        , {
+            headers:{
+                token:localStorage.getItem("token")
+            }
+        }
+    );
+}

@@ -61,3 +61,15 @@ export function signUpData(query) {
         }
     );
 }
+/**
+ * 首页 签到等操作
+ */
+export function studentStatus(query) {
+    return request.post(global.domainUrl + "/school/schoolIndex/updateCheckInStatus", query
+        , {
+            headers:{
+                token:localStorage.getItem("token")
+            }
+        }
+    );
+}

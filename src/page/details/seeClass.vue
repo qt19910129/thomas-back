@@ -105,7 +105,7 @@
                 };
                 // window.open("http://47.104.251.161:8080/school/schoolClass/exportSbjectExcel?classId="+ this.$route.query.classId);
 
-                window.location.href = this.GLOBAL.domain + '/school/schoolClass/exportSbjectExcel?classId='  + this.$route.query.classId;
+                window.location.href = this.GLOBAL.domainUrl + '/school/schoolClass/exportSbjectExcel?classId='  + this.$route.query.classId;
                 // loadSubject(data).then(res => {
                 //     console.log(res);
                 //     if(res.code == 0) {

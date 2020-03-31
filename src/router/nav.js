@@ -29,6 +29,7 @@ const SeeSubject = () => import("@/page/details/seeSubject.vue");  //班级科�
 const Teachers = () => import("@/page/details/teachers.vue");  //查看教师详情
 const TeacherClassTable = () => import("@/page/details/teacherClassTable.vue");  //查看教师课表详情
 const SeeGoods = () => import("@/page/details/seeGoods.vue");  //查看物品详情
+const SeeStudentClass = () => import("@/page/details/seeStudentClass.vue");  //查看学生科目表详情
 export default [
     { path: "/content/pageIndex", name: "首页", component: PageIndex },
     { path: "/content/dayFood", name: "每日食谱", component: DayFood },
@@ -57,4 +58,5 @@ export default [
     { path: "/content/goodsSet", name: "物品管理", component: GoodsSet },
     { path: "/content/goodsSet/seeGoods/:goodsId", name: "查看物品", component: SeeGoods },
     { path: "/content/courseBag", name: "课包管理", component: CourseBag },
+    { path: "/content/details/seeStudentClass/:subject/:ks/:kh/:syks/:userId", name: "学生科目课表详情", component: SeeStudentClass },
 ]

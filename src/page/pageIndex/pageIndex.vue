@@ -67,8 +67,8 @@
                 <!--<el-table-column prop="noSignNum" label="未签到" width="" align="center"></el-table-column>-->
                 <el-table-column label="未签到" width="" align="center">
                     <template slot-scope="scope">
-                        <!--<el-button type="text" icon="el-icon-user" @click="noSign(scope.row.classId,scope.row.className)">{{scope.row.unAttendanceCount}}</el-button>-->
-                        <span icon="el-icon-user">{{scope.row.unAttendanceCount}}</span>
+                        <el-button type="text" icon="el-icon-user" @click="noSign(scope.row.classId,scope.row.className,scope.row.subject)">{{scope.row.unAttendanceCount}}</el-button>
+                        <!--<span icon="el-icon-user">{{scope.row.unAttendanceCount}}</span>-->
                     </template>
                 </el-table-column>
                 <el-table-column prop="attendance" label="出勤率" width="" align="center">
@@ -80,12 +80,13 @@
             <!--未签到表格-->
             <el-dialog :title="noSignTitle" :visible.sync="dialogTableVisible">
                 <el-table :data="gridData" border style="font-size: 14px;" :header-cell-style="{background:'#53A1E8',color:'#fff'}">
-                    <el-table-column property="num" label="ID" align="center"></el-table-column>
-                    <el-table-column property="name" label="学生姓名" width="200" align="center"></el-table-column>
-                    <el-table-column property="edit" label="操作" align="center">
+                    <el-table-column type="index" label="ID" align="center"></el-table-column>
+                    <el-table-column property="studentName" label="学生姓名" align="center"></el-table-column>
+                    <el-table-column property="edit" label="操作" align="center" width="200">
                         <template slot-scope="scope">
-                            <el-button type="text" icon="el-icon-document" @click="signIn">签到</el-button>
-                            <el-button type="text" icon="el-icon-pie-chart" @click="signOut">请假</el-button>
+                            <el-button type="text" icon="el-icon-document" @click="signIn(scope.row.csdId,0,'签到')">签到</el-button>
+                            <el-button type="text" icon="el-icon-pie-chart" @click="signIn(scope.row.csdId,1,'请假')">请假</el-button>
+                            <el-button type="text" icon="el-icon-folder-delete" @click="signIn(scope.row.csdId,3,'旷课')">旷课</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -178,7 +179,8 @@
         renewData,
         signInData,
         noSignData,
-        signUpData
+        signUpData,
+        studentStatus
     } from "../../axios/pageIndex";
     import {
         studentRenew,
@@ -365,11 +367,35 @@
                     message: '取消输入'
                 });
             },
-            signIn() {
-                this.dialogTableVisible = false;
-                this.$message({
-                    type: 'success',
-                    message: '签到成功'
+            signIn(csdId,statusValue,text) {
+                this.$confirm('确定为该学员' + text + '吗?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let data = {
+                        'csdId':csdId,
+                        'statusValue':statusValue
+                    };
+                    studentStatus(data).then(res => {
+                        if(res.code == 0) {
+                            this.$message({
+                                type: 'success',
+                                message: text + '成功!'
+                            });
+                            setTimeout(function () {
+                                window.location.reload();
+                            },1000);
+                            // this.dialogTableVisible = false;
+                        } else {
+                            this.$message.error('网络异常，请稍后再试');
+                        }
+                    }).catch((e) => {});
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消' + text
+                    });
                 });
             },
             signOut() {
@@ -377,6 +403,13 @@
                 this.$message({
                     type: 'success',
                     message: '请假成功'
+                });
+            },
+            signNo() {
+                this.dialogTableVisible = false;
+                this.$message({
+                    type: 'success',
+                    message: '旷课成功'
                 });
             },
             dateFormat(row, column, cellValue, index){  //表格日期格式化
@@ -392,20 +425,20 @@
                 this.$refs['form'].resetFields();
                 this.dialogFormVisible = false;
             },
-            noSign(classId,className) {  //点击未签到
+            noSign(classId,className,subject) {  //点击未签到
                 this.dialogTableVisible = true;
                 this.noSignTitle = className + " 签到表";
                 let data = {
                     'classId':classId,
-                    'className':className,
+                    'subject':subject,
                     'page1':this.page1,
                     'rows1':this.rows1
                 };
                 noSignData(data).then(res => {
                     if(res.code == 0) {
-                        this.records1 = res.data.jqGirdPage.records;
-                        this.gridData = res.data.jqGirdPage.rows;
-                        if(res.data.jqGirdPage.records1 <= 10) {  //小于10条时 隐藏分页
+                        this.records1 = res.data.pages;
+                        this.gridData = res.data.list;
+                        if(res.data.pages <= 10) {  //小于10条时 隐藏分页
                             this.pageValue1 = true;
                         }
                     } else {

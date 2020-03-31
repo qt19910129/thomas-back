@@ -92,6 +92,7 @@
     import {
         getStudentSetList,
         studentRenew,
+        getBagsList
     } from "../../axios/studentSet";
     import moment from 'moment';
     export default {
@@ -189,8 +190,18 @@
         },
         mounted() {
             this.getList();  //列表数据
+            this.getBags();  //课时包列表
         },
         methods: {
+            getBags() {  //获取课时包列表
+                getBagsList().then(res => {
+                    if(res.code == 0) {
+
+                    } else {
+                        this.$message.error('网络异常，请稍后再试');
+                    }
+                }).catch((e) => {});
+            },
             dataReset() {  //重置搜索
                 this.$refs['ruleForm'].resetFields();
                 let data = {
